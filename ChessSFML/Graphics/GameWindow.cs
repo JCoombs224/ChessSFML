@@ -80,6 +80,24 @@ namespace ChessSFML
             }
         }
 
+        /// <summary>
+        /// Function called when the window is closed
+        /// </summary>
+        static void OnClosed(object sender, EventArgs e)
+        {
+            var window = (RenderWindow)sender;
+            window.Close();
+        }
+
+        private void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
+        {
+            var window = (SFML.Window.Window)sender;
+            if (e.Code == SFML.Window.Keyboard.Key.Escape)
+            {
+                window.Close();
+            }
+        }
+
         public void drawBoard(ref RenderWindow window, Sprite sprite)
         {
             int z = 0;
@@ -117,23 +135,7 @@ namespace ChessSFML
             }
         }
 
-        /// <summary>
-        /// Function called when the window is closed
-        /// </summary>
-        static void OnClosed(object sender, EventArgs e)
-        {
-            var window = (RenderWindow)sender;
-            window.Close();
-        }
-
-        private void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
-        {
-            var window = (SFML.Window.Window)sender;
-            if (e.Code == SFML.Window.Keyboard.Key.Escape)
-            {
-                window.Close();
-            }
-        }
+        
     }
 
 

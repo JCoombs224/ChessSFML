@@ -16,6 +16,18 @@ namespace ChessSFML
             initializeBoard();
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
         public Square sqaureAt(int x, int y)
         {
             return grid[x, y];
