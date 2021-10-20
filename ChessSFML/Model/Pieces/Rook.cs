@@ -8,6 +8,7 @@ namespace ChessSFML
 {
     public class Rook : PieceBase
     {
+        public override int SpriteID => 1;
         public Rook(PieceColor color) : base(color)
         {
             MoveVertical = true;

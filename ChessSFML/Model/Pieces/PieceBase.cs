@@ -15,12 +15,16 @@ namespace ChessSFML
         protected bool MoveVertical;
         protected bool MoveHorizontal;
         protected bool MoveDiagonal;
-        protected int MoveCap = 0;
+        public int MoveCap = 0;
+
+        public virtual int SpriteID { get; }
+        public readonly int SpriteColorID; // 0 is white, 1 is black
 
 
         public PieceBase(PieceColor color)
         {
             pieceColor = color;
+            SpriteColorID = this.pieceColor == PieceColor.White ? 0 : 1;
         }
 
         public bool canMoveVertical()

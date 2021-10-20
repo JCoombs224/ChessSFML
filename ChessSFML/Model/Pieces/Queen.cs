@@ -8,6 +8,7 @@ namespace ChessSFML
 {
     public class Queen : PieceBase
     {
+        public override int SpriteID => 4;
         public Queen(PieceColor color) : base(color)
         {
             MoveVertical = true;

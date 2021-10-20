@@ -7,9 +7,10 @@ namespace ChessSFML
     {
         static void Main(string[] args)
         {
-            GameWindow window = new GameWindow();
+            // 1024 is the window resolution
+            Game game = new Game(1024);
 
-            window.Show();
+            game.Show();
         }
     }
 }

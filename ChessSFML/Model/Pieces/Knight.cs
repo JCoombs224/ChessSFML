@@ -8,6 +8,7 @@ namespace ChessSFML
 {
     public class Knight : PieceBase
     {
+        public override int SpriteID => 2;
         public Knight(PieceColor color) : base(color)
         {
             

@@ -10,6 +10,7 @@ namespace ChessSFML
     public class Pawn : PieceBase
     {
         private bool isFirstMove = true;
+        public override int SpriteID => 0;
 
         public Pawn(PieceColor color) : base(color)
         {

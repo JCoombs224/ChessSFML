@@ -9,6 +9,7 @@ namespace ChessSFML
     public class Square
     {
         private PieceBase currentPiece;
+        public bool isSelected = false;
 
         public Square()
         {
@@ -18,9 +19,14 @@ namespace ChessSFML
         {
             this.currentPiece = piece;
         }
-        public PieceBase getCurrentPiece()
+
+        public void Select()
         {
-            return this.currentPiece;
+            isSelected = true;
+        }
+        public void Deselect()
+        {
+            isSelected = false;
         }
 
         public void setPiece(PieceBase piece)
@@ -35,7 +41,7 @@ namespace ChessSFML
 
         public PieceBase getPiece()
         {
-            return currentPiece;
+            return this.currentPiece;
         }
 
         public void removePiece()
