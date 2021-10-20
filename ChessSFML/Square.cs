@@ -10,14 +10,20 @@ namespace ChessSFML
     {
         private PieceBase currentPiece;
         public bool isSelected = false;
+        public int posX;
+        public int posY;
 
-        public Square()
+        public Square(int x, int y)
         {
             currentPiece = null;
+            posX = x;
+            posY = y;
         }
-        public Square(PieceBase piece)
+        public Square(PieceBase piece, int x, int y)
         {
             this.currentPiece = piece;
+            posX = x;
+            posY = y;
         }
 
         public void Select()
@@ -37,6 +43,16 @@ namespace ChessSFML
         public bool hasPiece()
         {
             return currentPiece != null;
+        }
+
+        public bool hasEnemyPiece(PieceColor currentPlayerColor)
+        {
+            if (currentPiece == null)
+                return false;
+            if (currentPlayerColor == currentPiece.pieceColor)
+                return false;
+
+            return true;
         }
 
         public PieceBase getPiece()

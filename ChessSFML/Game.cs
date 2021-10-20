@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SFML.System;
 using SFML.Graphics;
 using SFML.Audio;
@@ -13,19 +9,28 @@ namespace ChessSFML
     public class Game
     {
         // Settings
-        public readonly uint GameResolution;
+        public readonly uint GameResolutionY;
+        public readonly uint GameResolutionX;
         public static readonly int RawTextureSize = 32;
         public static readonly int TextureScale = 4;
         public static readonly int TextureSize = RawTextureSize * TextureScale;
-        static PieceColor CurrentColor = PieceColor.White;
+        const string FONT_PATH = "C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\font\\arial.ttf";
+        public static PieceColor CurrentColor = PieceColor.White;
+
+        private static bool GameWon = false;
         static Board board = new Board();
 
         private int mouseX;
         private int mouseY;
 
+        // Text Settings
+        static Font font = new Font(FONT_PATH);
+        static Text playerText = new Text();
+
         public Game(uint res)
         {
-            GameResolution = res;
+            GameResolutionY = res;
+            GameResolutionX = (uint)(res * 1.3);
         }
 
         public void Show()
@@ -33,17 +38,17 @@ namespace ChessSFML
             float deltaTime = 0.00f;
             Clock clock = new Clock();
 
-            VideoMode mode = new VideoMode(GameResolution, GameResolution);
+            VideoMode mode = new VideoMode(GameResolutionX, GameResolutionY);
             RenderWindow window = new RenderWindow(mode, "Chess", Styles.Titlebar | Styles.Close);
 
             window.KeyPressed += OnKeyPressed;
             window.Closed += OnClosed;
             window.MouseButtonPressed += OnMouseClick;
-
+            
+            // Window Settings
             Vector2u windowSize = window.Size;
             float vCenterX = (8 * TextureSize) / 2;
             float vCenterY = (8 * TextureSize) / 2;
-
             View GameView = new View(new Vector2f(vCenterX, vCenterY), new Vector2f(8, 8));
             window.SetView(GameView);
             window.SetVerticalSyncEnabled(true);
@@ -51,10 +56,16 @@ namespace ChessSFML
             //mouseX = (int)pos.X / TextureSize;
             //mouseY = (int)pos.Y / TextureSize;
 
+            playerText.Font = font;
+            playerText.CharacterSize = 28;
+            playerText.Position = new Vector2f(GameResolutionY + 60, vCenterY - 28);
+            playerText.DisplayedString = "White's Turn";
+            playerText.FillColor = Color.White;
+
             while (window.IsOpen)
             {
                 deltaTime = clock.Restart().AsSeconds();
-                window.Clear(new Color(18, 77, 122));
+                window.Clear(new Color(161, 117, 82));
                 window.SetView(window.DefaultView);
 
                 Vector2i mPosWindow = Mouse.GetPosition(window);
@@ -63,10 +74,33 @@ namespace ChessSFML
                 mouseY = mPosWindow.Y / TextureSize;
 
                 board.DrawBoard(ref window);
+                window.Draw(playerText);
                 window.Display();
 
                 window.DispatchEvents();
             }
+        }
+
+        public static void ChangePlayer()
+        {
+            if (CurrentColor == PieceColor.White)
+            {
+                CurrentColor = PieceColor.Black;
+                playerText.DisplayedString = "Black's Turn";
+                playerText.FillColor = Color.Black;
+            }
+            else
+            {
+                CurrentColor = PieceColor.White;
+                playerText.DisplayedString = "White's Turn";
+                playerText.FillColor = Color.White;
+            }
+        }
+
+        public static void GameOver()
+        {
+            playerText.DisplayedString = "Checkmate!!\n" + CurrentColor.ToString() + " Wins!!";
+            GameWon = true;
         }
 
         /// <summary>
@@ -93,15 +127,26 @@ namespace ChessSFML
             var window = (SFML.Window.Window)sender;
             if (e.Button == SFML.Window.Mouse.Button.Left)
             {
-                Square squareClicked = board.SqaureAt(mouseX, mouseY);
-                if (squareClicked != null && squareClicked.hasPiece() && squareClicked.getPiece().pieceColor == CurrentColor)
-                    board.SelectSquare(mouseX, mouseY);
-                else
-                    board.Deselect();
+                if (mouseX < 0 || mouseX > 7 || mouseY < 0 || mouseY > 7)
+                    return;
+
+                if (!GameWon)
+                {
+                    Square squareClicked = board.SqaureAt(mouseX, mouseY);
+                    if (squareClicked == null)
+                        board.Deselect();
+                    if (board.SelectedPieceMoves.Contains(squareClicked))
+                    {
+                        board.MoveSelectedPiece(squareClicked, mouseX, mouseY);
+                    }
+                    else if (squareClicked.hasPiece() && squareClicked.getPiece().pieceColor == CurrentColor)
+                        board.SelectSquare(mouseX, mouseY);
+                    else
+                        board.Deselect();
+                }
 
                 Console.Out.Write(mouseX + " ");
                 Console.Out.Write(mouseY + "\n");
-
             }
         }
 
