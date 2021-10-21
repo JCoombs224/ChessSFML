@@ -16,10 +16,10 @@ namespace ChessSFML
     public class Board
     {
         static string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
-        static string BoardTexturePath = String.Format("{0}Resources\\board.png", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-        static string PieceTexturePath = String.Format("{0}Resources\\pieces.png", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-        static string SelectSoundPath = String.Format("{0}Resources\\sound\\select.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-        static string DeselectSoundPath = String.Format("{0}Resources\\sound\\deselect.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+        static string BoardTexturePath = String.Format("{0}Resources\\board.png", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+        static string PieceTexturePath = String.Format("{0}Resources\\pieces.png", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+        static string SelectSoundPath = String.Format("{0}Resources\\sound\\select.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+        static string DeselectSoundPath = String.Format("{0}Resources\\sound\\deselect.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
 
         // Settings can be changed in Game class
         static readonly int RawTextureSize = Game.RawTextureSize;
@@ -517,10 +517,10 @@ namespace ChessSFML
                 grid[i, 1].setPiece(new Pawn(PieceColor.Black));
 
 
-            string MoveSound1Path = String.Format("{0}Resources\\sound\\place1.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-            string MoveSound2Path = String.Format("{0}Resources\\sound\\place2.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-            string MoveSound3Path = String.Format("{0}Resources\\sound\\place3.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
-            string MoveSound4Path = String.Format("{0}Resources\\sound\\place4.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+            string MoveSound1Path = String.Format("{0}Resources\\sound\\place1.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+            string MoveSound2Path = String.Format("{0}Resources\\sound\\place2.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+            string MoveSound3Path = String.Format("{0}Resources\\sound\\place3.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
+            string MoveSound4Path = String.Format("{0}Resources\\sound\\place4.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"")));
 
             MoveSoundBuffer[0] = new SoundBuffer(MoveSound1Path);
             MoveSoundBuffer[1] = new SoundBuffer(MoveSound2Path);

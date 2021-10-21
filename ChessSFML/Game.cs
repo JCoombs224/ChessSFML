@@ -15,7 +15,7 @@ namespace ChessSFML
         public static readonly int TextureScale = 4;
         public static readonly int TextureSize = RawTextureSize * TextureScale;
         static string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
-        static string FontPath = String.Format("{0}Resources\\font\\arial.ttf", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+        static string FontPath = String.Format("{0}Resources\\font\\arial.ttf", Path.GetFullPath(Path.Combine(RunningPath, @"")));
         public static PieceColor CurrentColor = PieceColor.White;
 
         private static bool GameWon = false;
