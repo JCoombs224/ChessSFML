@@ -8,25 +8,31 @@ using SFML.Graphics;
 using SFML.Audio;
 using SFML.Window;
 using SFML.System;
+using System.IO;
+using System.Reflection;
 
 namespace ChessSFML
 {
     public class Board
     {
+        static string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
+        static string BoardTexturePath = String.Format("{0}Resources\\board.png", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+        static string PieceTexturePath = String.Format("{0}Resources\\pieces.png", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+        static string SelectSoundPath = String.Format("{0}Resources\\sound\\select.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+        static string DeselectSoundPath = String.Format("{0}Resources\\sound\\deselect.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+
         // Settings can be changed in Game class
-        const string BOARD_TEXTURE_FILE_PATH = "C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\board.png";
-        const string PIECE_TEXTURE_FILE_PATH = "C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\pieces.png";
         static readonly int RawTextureSize = Game.RawTextureSize;
         static readonly int TextureScale = Game.TextureScale;
         static readonly int TextureSize = Game.TextureSize;
         // Load in textures/sprites
-        static Texture BoardTexture = new Texture(BOARD_TEXTURE_FILE_PATH);
+        static Texture BoardTexture = new Texture(BoardTexturePath);
         static Sprite BoardSprite = new Sprite(BoardTexture);
-        static Texture PieceTexture = new Texture(PIECE_TEXTURE_FILE_PATH);
+        static Texture PieceTexture = new Texture(PieceTexturePath);
         static Sprite PieceSprite = new Sprite(PieceTexture);
         // Load in sounds
-        private static SoundBuffer SelectSoundBuffer = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\select.ogg");
-        private static SoundBuffer DeselectSoundBuffer = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\deselect.ogg");
+        private static SoundBuffer SelectSoundBuffer = new SoundBuffer(SelectSoundPath);
+        private static SoundBuffer DeselectSoundBuffer = new SoundBuffer(DeselectSoundPath);
         private static SoundBuffer[] MoveSoundBuffer = new SoundBuffer[4];
         private Sound SelectSound = new Sound(SelectSoundBuffer);
         private Sound DeselectSound = new Sound(DeselectSoundBuffer);
@@ -510,10 +516,16 @@ namespace ChessSFML
             for (int i = 0; i < 8; i++)
                 grid[i, 1].setPiece(new Pawn(PieceColor.Black));
 
-            MoveSoundBuffer[0] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place1.ogg");
-            MoveSoundBuffer[1] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place2.ogg");
-            MoveSoundBuffer[2] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place3.ogg");
-            MoveSoundBuffer[3] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place4.ogg");
+
+            string MoveSound1Path = String.Format("{0}Resources\\sound\\place1.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+            string MoveSound2Path = String.Format("{0}Resources\\sound\\place2.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+            string MoveSound3Path = String.Format("{0}Resources\\sound\\place3.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+            string MoveSound4Path = String.Format("{0}Resources\\sound\\place4.ogg", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
+
+            MoveSoundBuffer[0] = new SoundBuffer(MoveSound1Path);
+            MoveSoundBuffer[1] = new SoundBuffer(MoveSound2Path);
+            MoveSoundBuffer[2] = new SoundBuffer(MoveSound3Path);
+            MoveSoundBuffer[3] = new SoundBuffer(MoveSound4Path);
         }
 
         // 0 = white sqaure, 1 = 'black' square

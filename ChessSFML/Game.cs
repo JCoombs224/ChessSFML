@@ -1,8 +1,8 @@
 ﻿using System;
 using SFML.System;
 using SFML.Graphics;
-using SFML.Audio;
 using SFML.Window;
+using System.IO;
 
 namespace ChessSFML
 {
@@ -14,7 +14,8 @@ namespace ChessSFML
         public static readonly int RawTextureSize = 32;
         public static readonly int TextureScale = 4;
         public static readonly int TextureSize = RawTextureSize * TextureScale;
-        const string FONT_PATH = "C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\font\\arial.ttf";
+        static string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
+        static string FontPath = String.Format("{0}Resources\\font\\arial.ttf", Path.GetFullPath(Path.Combine(RunningPath, @"..\..\")));
         public static PieceColor CurrentColor = PieceColor.White;
 
         private static bool GameWon = false;
@@ -24,7 +25,7 @@ namespace ChessSFML
         private int mouseY;
 
         // Text Settings
-        static Font font = new Font(FONT_PATH);
+        static Font font = new Font(FontPath);
         static Text playerText = new Text();
 
         public Game(uint res)
