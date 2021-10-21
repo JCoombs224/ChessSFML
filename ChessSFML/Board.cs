@@ -24,6 +24,13 @@ namespace ChessSFML
         static Sprite BoardSprite = new Sprite(BoardTexture);
         static Texture PieceTexture = new Texture(PIECE_TEXTURE_FILE_PATH);
         static Sprite PieceSprite = new Sprite(PieceTexture);
+        // Load in sounds
+        private static SoundBuffer SelectSoundBuffer = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\select.ogg");
+        private static SoundBuffer DeselectSoundBuffer = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\deselect.ogg");
+        private static SoundBuffer[] MoveSoundBuffer = new SoundBuffer[4];
+        private Sound SelectSound = new Sound(SelectSoundBuffer);
+        private Sound DeselectSound = new Sound(DeselectSoundBuffer);
+        private Sound MoveSound = new Sound();
 
         public static Square SelectedSquare;
         public HashSet<Square> SelectedPieceMoves = new HashSet<Square>();
@@ -49,14 +56,14 @@ namespace ChessSFML
                     BoardSprite.Position = new Vector2f(i * TextureSize, j * TextureSize);
                     window.Draw(BoardSprite);
 
-                    if(grid[i, j] == SelectedSquare)
+                    if (grid[i, j] == SelectedSquare)
                     {
                         BoardSprite.TextureRect = new IntRect(2 * RawTextureSize, 0, RawTextureSize, RawTextureSize);
                         BoardSprite.Color = Color.Green;
                         window.Draw(BoardSprite);
                         BoardSprite.Color = Color.White;
                     }
-                    if(SelectedPieceMoves.Contains(grid[i,j]))
+                    if (SelectedPieceMoves.Contains(grid[i, j]))
                     {
                         BoardSprite.TextureRect = new IntRect(2 * RawTextureSize, 0, RawTextureSize, RawTextureSize);
                         if (grid[i, j].getPiece() is King)
@@ -88,11 +95,13 @@ namespace ChessSFML
             SelectedSquare = grid[x, y];
             SelectedPieceMoves.Clear();
             GetSelectedPieceMoves(grid[x, y].getPiece(), x, y);
+            SelectSound.Play();
         }
-        public void Deselect()
+        public void Deselect(bool playSnd = true)
         {
             SelectedSquare = null;
             SelectedPieceMoves.Clear();
+            if (playSnd) DeselectSound.Play();
         }
 
         public Square GetSelectedSquare()
@@ -123,14 +132,19 @@ namespace ChessSFML
             // Checkmate
             if (square.hasPiece() && square.getPiece() is King)
                 Game.GameOver();
+            else
+                Game.ChangePlayer();
 
             square.setPiece(piece);
             grid[x, y] = square;
             grid[oldX, oldY].setPiece(null);
-            Deselect();
+            Deselect(false); // The false is so deselect is not played
             SelectedPieceMoves.Clear();
 
-            Game.ChangePlayer();
+            Random rnd = new Random();
+            MoveSound.SoundBuffer = MoveSoundBuffer[rnd.Next(4)];
+            MoveSound.Play();
+
         }
 
         private void GetSelectedPieceMoves(PieceBase piece, int x, int y)
@@ -139,7 +153,7 @@ namespace ChessSFML
             int xMax = 7, xMin = 0;
             int yMax = 7, yMin = 0;
 
-            if(piece.getMoveCap() != 0)
+            if (piece.getMoveCap() != 0)
             {
                 xMax = x + piece.getMoveCap();
                 xMin = x - piece.getMoveCap();
@@ -148,11 +162,11 @@ namespace ChessSFML
             }
 
             // Pawn has special move set
-            if(piece is Pawn)
+            if (piece is Pawn)
                 GetPawnMoves(color, x, y, yMin, yMax);
 
             // Knight has special move set
-            if(piece is Knight)
+            if (piece is Knight)
                 GetKnightMoves(color, x, y);
 
             if (piece is Rook)
@@ -171,61 +185,61 @@ namespace ChessSFML
         // TODO: Definitely redo this
         private void GetKingMoves(PieceColor color, int x, int y)
         {
-            if(x < 7)
+            if (x < 7)
             {
-                if (grid[x+1, y].hasEnemyPiece(color))
-                    SelectedPieceMoves.Add(grid[x+1, y]);
-                else if (!grid[x+1, y].hasPiece())
-                    SelectedPieceMoves.Add(grid[x+1, y]);
+                if (grid[x + 1, y].hasEnemyPiece(color))
+                    SelectedPieceMoves.Add(grid[x + 1, y]);
+                else if (!grid[x + 1, y].hasPiece())
+                    SelectedPieceMoves.Add(grid[x + 1, y]);
                 if (y < 7)
                 {
-                    if (grid[x+1, y + 1].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x+1, y + 1]);
-                    else if (!grid[x+1, y + 1].hasPiece())
-                        SelectedPieceMoves.Add(grid[x+1, y + 1]);
+                    if (grid[x + 1, y + 1].hasEnemyPiece(color))
+                        SelectedPieceMoves.Add(grid[x + 1, y + 1]);
+                    else if (!grid[x + 1, y + 1].hasPiece())
+                        SelectedPieceMoves.Add(grid[x + 1, y + 1]);
                 }
                 if (y > 0)
                 {
-                    if (grid[x+1, y - 1].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x+1, y - 1]);
-                    else if (!grid[x+1, y - 1].hasPiece())
-                        SelectedPieceMoves.Add(grid[x+1, y - 1]);
+                    if (grid[x + 1, y - 1].hasEnemyPiece(color))
+                        SelectedPieceMoves.Add(grid[x + 1, y - 1]);
+                    else if (!grid[x + 1, y - 1].hasPiece())
+                        SelectedPieceMoves.Add(grid[x + 1, y - 1]);
                 }
             }
-            if(x > 0)
+            if (x > 0)
             {
-                if (grid[x-1, y].hasEnemyPiece(color))
+                if (grid[x - 1, y].hasEnemyPiece(color))
                     SelectedPieceMoves.Add(grid[x - 1, y]);
-                else if (!grid[x-1, y].hasPiece())
+                else if (!grid[x - 1, y].hasPiece())
                     SelectedPieceMoves.Add(grid[x - 1, y]);
                 if (y < 7)
                 {
-                    if (grid[x-1, y + 1].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x-1, y + 1]);
-                    else if (!grid[x-1, y + 1].hasPiece())
-                        SelectedPieceMoves.Add(grid[x-1, y + 1]);
+                    if (grid[x - 1, y + 1].hasEnemyPiece(color))
+                        SelectedPieceMoves.Add(grid[x - 1, y + 1]);
+                    else if (!grid[x - 1, y + 1].hasPiece())
+                        SelectedPieceMoves.Add(grid[x - 1, y + 1]);
                 }
                 if (y > 0)
                 {
-                    if (grid[x-1, y - 1].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x-1, y - 1]);
-                    else if (!grid[x-1, y - 1].hasPiece())
-                        SelectedPieceMoves.Add(grid[x-1, y - 1]);
+                    if (grid[x - 1, y - 1].hasEnemyPiece(color))
+                        SelectedPieceMoves.Add(grid[x - 1, y - 1]);
+                    else if (!grid[x - 1, y - 1].hasPiece())
+                        SelectedPieceMoves.Add(grid[x - 1, y - 1]);
                 }
             }
             if (y < 7)
             {
-                if (grid[x, y+1].hasEnemyPiece(color))
-                    SelectedPieceMoves.Add(grid[x, y+1]);
-                else if (!grid[x, y+1].hasPiece())
-                    SelectedPieceMoves.Add(grid[x, y+1]);
+                if (grid[x, y + 1].hasEnemyPiece(color))
+                    SelectedPieceMoves.Add(grid[x, y + 1]);
+                else if (!grid[x, y + 1].hasPiece())
+                    SelectedPieceMoves.Add(grid[x, y + 1]);
             }
             if (y > 0)
             {
-                if (grid[x, y-1].hasEnemyPiece(color))
-                    SelectedPieceMoves.Add(grid[x, y-1]);
-                else if (!grid[x, y-1].hasPiece())
-                    SelectedPieceMoves.Add(grid[x, y-1]);
+                if (grid[x, y - 1].hasEnemyPiece(color))
+                    SelectedPieceMoves.Add(grid[x, y - 1]);
+                else if (!grid[x, y - 1].hasPiece())
+                    SelectedPieceMoves.Add(grid[x, y - 1]);
             }
         }
 
@@ -250,7 +264,7 @@ namespace ChessSFML
         private void ScanX(PieceColor color, int x, int y)
         {
             // Scan positive X
-            for (int i = x+1; i < 8; i++)
+            for (int i = x + 1; i < 8; i++)
             {
                 if (grid[i, y].hasEnemyPiece(color))
                 {
@@ -263,7 +277,7 @@ namespace ChessSFML
                 SelectedPieceMoves.Add(grid[i, y]);
             }
             // Scan negative X
-            for (int i = x-1; i >= 0; i--)
+            for (int i = x - 1; i >= 0; i--)
             {
                 if (grid[i, y].hasEnemyPiece(color))
                 {
@@ -280,7 +294,7 @@ namespace ChessSFML
         private void ScanY(PieceColor color, int x, int y)
         {
             // Scan positive Y
-            for (int i = y+1; i < 8; i++)
+            for (int i = y + 1; i < 8; i++)
             {
                 if (grid[x, i].hasEnemyPiece(color))
                 {
@@ -293,7 +307,7 @@ namespace ChessSFML
                 SelectedPieceMoves.Add(grid[x, i]);
             }
             // Scan negative Y
-            for (int i = y-1; i >= 0; i--)
+            for (int i = y - 1; i >= 0; i--)
             {
                 if (grid[x, i].hasEnemyPiece(color))
                 {
@@ -313,67 +327,67 @@ namespace ChessSFML
             int j = y + 1;
             // Scan +x +y
             if (j < 8)
-            for (int i = x+1; i < 8; i++)
-            {
-                if (grid[i, j].hasEnemyPiece(color))
+                for (int i = x + 1; i < 8; i++)
                 {
+                    if (grid[i, j].hasEnemyPiece(color))
+                    {
+                        SelectedPieceMoves.Add(grid[i, j]);
+                        break;
+                    }
+                    else if (grid[i, j].hasPiece())
+                        break;
+
                     SelectedPieceMoves.Add(grid[i, j]);
-                    break;
+
+                    if (j == 7)
+                        break;
+                    j++;
                 }
-                else if (grid[i, j].hasPiece())
-                    break;
-
-                SelectedPieceMoves.Add(grid[i, j]);
-
-                if (j == 7)
-                    break;
-                j++;
-            }
 
             j = y + 1;
             // Scan -x +y
-            if(j < 8)
-            for (int i = x - 1; i >= 0; i--)
-            {
-                if (grid[i, j].hasEnemyPiece(color))
+            if (j < 8)
+                for (int i = x - 1; i >= 0; i--)
                 {
+                    if (grid[i, j].hasEnemyPiece(color))
+                    {
+                        SelectedPieceMoves.Add(grid[i, j]);
+                        break;
+                    }
+                    else if (grid[i, j].hasPiece())
+                        break;
+
                     SelectedPieceMoves.Add(grid[i, j]);
-                    break;
+
+                    if (j == 7)
+                        break;
+                    j++;
                 }
-                else if (grid[i, j].hasPiece())
-                    break;
-
-                SelectedPieceMoves.Add(grid[i, j]);
-
-                if (j == 7)
-                    break;
-                j++;
-            }
 
             j = y - 1;
             // Scan +x -y
-            if(j >= 0)
-            for (int i = x + 1; i < 8; i++)
-            {
-                if (grid[i, j].hasEnemyPiece(color))
+            if (j >= 0)
+                for (int i = x + 1; i < 8; i++)
                 {
+                    if (grid[i, j].hasEnemyPiece(color))
+                    {
+                        SelectedPieceMoves.Add(grid[i, j]);
+                        break;
+                    }
+                    else if (grid[i, j].hasPiece())
+                        break;
+
                     SelectedPieceMoves.Add(grid[i, j]);
-                    break;
+
+                    if (j == 0)
+                        break;
+                    j--;
                 }
-                else if (grid[i, j].hasPiece())
-                    break;
-
-                SelectedPieceMoves.Add(grid[i, j]);
-
-                if (j == 0)
-                    break;
-                j--;
-            }
 
             j = y - 1;
             // Scan -x -y
             if (j >= 0)
-                for (int i = x - 1 ; i >= 0; i--)
+                for (int i = x - 1; i >= 0; i--)
                 {
                     if (grid[i, j].hasEnemyPiece(color))
                     {
@@ -432,33 +446,39 @@ namespace ChessSFML
         {
             if (color == PieceColor.White)
             {
-                if(y > 0)
-                for (int i = y - 1; i >= yMin; i--)
-                {
-                    if (x < 7 && grid[x+1, i].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x+1, i]);
-                    if (x > 0 && grid[x - 1, i].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x - 1, i]);
-                    if (grid[x, i].hasPiece())
-                        break;
+                if (y > 0)
+                    for (int i = y - 1; i >= yMin; i--)
+                    {
+                        if (i != y - 2)
+                        {
+                            if (x < 7 && grid[x + 1, i].hasEnemyPiece(color))
+                                SelectedPieceMoves.Add(grid[x + 1, i]);
+                            if (x > 0 && grid[x - 1, i].hasEnemyPiece(color))
+                                SelectedPieceMoves.Add(grid[x - 1, i]);
+                        }
+                        if (grid[x, i].hasPiece())
+                            break;
 
-                    SelectedPieceMoves.Add(grid[x, i]);
-                }
+                        SelectedPieceMoves.Add(grid[x, i]);
+                    }
             }
             else
             {
-                if(y < 7)
-                for (int i = y + 1; i <= yMax; i++)
-                {
-                    if (x < 7 && grid[x + 1, i].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x + 1, i]);
-                    if (x > 0 && grid[x - 1, i].hasEnemyPiece(color))
-                        SelectedPieceMoves.Add(grid[x - 1, i]);
-                    if (grid[x, i].hasPiece())
-                        break;
+                if (y < 7)
+                    for (int i = y + 1; i <= yMax; i++)
+                    {
+                        if (i != y + 2)
+                        {
+                            if (x < 7 && grid[x + 1, i].hasEnemyPiece(color))
+                                SelectedPieceMoves.Add(grid[x + 1, i]);
+                            if (x > 0 && grid[x - 1, i].hasEnemyPiece(color))
+                                SelectedPieceMoves.Add(grid[x - 1, i]);
+                        }
+                        if (grid[x, i].hasPiece())
+                            break;
 
-                    SelectedPieceMoves.Add(grid[x, i]);
-                }
+                        SelectedPieceMoves.Add(grid[x, i]);
+                    }
             }
         }
 
@@ -489,6 +509,11 @@ namespace ChessSFML
             grid[7, 0].setPiece(new Rook(PieceColor.Black));
             for (int i = 0; i < 8; i++)
                 grid[i, 1].setPiece(new Pawn(PieceColor.Black));
+
+            MoveSoundBuffer[0] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place1.ogg");
+            MoveSoundBuffer[1] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place2.ogg");
+            MoveSoundBuffer[2] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place3.ogg");
+            MoveSoundBuffer[3] = new SoundBuffer("C:\\Users\\Jamison\\Google Drive\\Programming Projects\\Chess\\ChessSFML\\ChessSFML\\res\\sound\\place4.ogg");
         }
 
         // 0 = white sqaure, 1 = 'black' square
