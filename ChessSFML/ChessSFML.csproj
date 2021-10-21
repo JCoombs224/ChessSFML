@@ -40,6 +40,9 @@
     <None Update="Resources\font\ariblk.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\font\ARLRDBD.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\pieces.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
