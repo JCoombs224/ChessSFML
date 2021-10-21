@@ -10,3 +10,6 @@ The game is now in a playable state but I still need to clean up the code a bit 
 <p>
   <img src="img/1.png" width="700" />
 </p>
+<p>
+  <img src="img/gameplay.gif" width="700" />
+</p>
